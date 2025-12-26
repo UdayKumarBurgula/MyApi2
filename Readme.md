@@ -113,3 +113,41 @@ Don’t reuse DbContext across iterations
 Use try/catch so one failure doesn’t kill the service
 
 Prefer a queue (Channels) if you need to process events
+
+
+Use separate DbContext instances for parallel EF
+-------------------------------------------------------
+If you truly need parallel DB calls, create a new DbContext per task.
+Best way in ASP.NET Core: IDbContextFactory<TContext>.
+
+builder.Services.AddDbContextFactory<AppDbContext>(options =>
+    options.UseNpgsql(connString));
+
+var t1 = Task.Run(async () =>
+{
+    await using var db = await _factory.CreateDbContextAsync(ct);
+    return await db.TodoItems.AsNoTracking().ToListAsync(ct);
+});
+
+var t2 = Task.Run(async () =>
+{
+    await using var db = await _factory.CreateDbContextAsync(ct);
+    return await db.Users.AsNoTracking().ToListAsync(ct);
+});
+
+await Task.WhenAll(t1, t2);
+
+One context, one transaction, no parallel EF
+-----------------------------------------------------
+If you need atomic work across multiple operations, keep one DbContext and do it sequentially within a transaction:
+
+await using var tx = await _db.Database.BeginTransactionAsync(ct);
+
+var a = await _db.TableA.ToListAsync(ct);
+var b = await _db.TableB.ToListAsync(ct);
+
+await _db.SaveChangesAsync(ct);
+await tx.CommitAsync(ct);
+
+This ensures all operations are part of the same transaction and DbContext instance, avoiding concurrency issues.
+
