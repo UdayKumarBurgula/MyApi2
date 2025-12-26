@@ -89,3 +89,15 @@ If the handler were singleton, it would lead to capturing a scoped service in a 
 which is not allowed in ASP.NET Core's DI system. 
 This ensures that each request gets its own instance of the handler, which in turn gets its own instance of the scoped services it depends on.
 
+Quick “lifetime safety” rules that prevent most bugs
+-----------------------------------------------------------
+Singleton must not depend on Scoped. Ever.
+
+Don’t store request/user data in singletons.
+
+No fire-and-forget with scoped services.
+
+DbContext should be Scoped.
+
+Middleware: scoped deps only in InvokeAsync.
+
