@@ -1,3 +1,4 @@
+using MyApi.Api.Background;
 using MyApi.Api.Middleware;
 using MyApi.Application;
 using MyApi.Infrastructure;
@@ -10,6 +11,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+//builder.Services.AddScoped<TodoCleanupJob>();
+//builder.Services.AddHostedService<Worker>();
 
 var app = builder.Build();
 

@@ -101,3 +101,15 @@ DbContext should be Scoped.
 
 Middleware: scoped deps only in InvokeAsync.
 
+How scope behaves with background jobs (needs IServiceScopeFactory)
+Background Jobs with Scoped Services in .NET - Best practices
+-------------------------------------------------------------------------
+Create a new scope per job run (or per message)
+
+Keep background job methods short
+
+Don’t reuse DbContext across iterations
+
+Use try/catch so one failure doesn’t kill the service
+
+Prefer a queue (Channels) if you need to process events
