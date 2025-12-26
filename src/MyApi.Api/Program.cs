@@ -1,6 +1,8 @@
+using MediatR;
 using MyApi.Api.Background;
 using MyApi.Api.Middleware;
 using MyApi.Application;
+using MyApi.Application.Common.Behaviors;
 using MyApi.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+
 
 //builder.Services.AddScoped<TodoCleanupJob>();
 //builder.Services.AddHostedService<Worker>();

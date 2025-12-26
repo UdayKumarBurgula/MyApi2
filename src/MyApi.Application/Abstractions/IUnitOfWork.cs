@@ -1,6 +1,9 @@
-﻿namespace MyApi.Application.Abstractions;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+
+namespace MyApi.Application.Abstractions;
 
 public interface IUnitOfWork
 {
     Task<int> SaveChangesAsync(CancellationToken ct = default);
+    Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken ct = default);
 }
