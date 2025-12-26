@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MyApi.Application.Dtos;
-using MyApi.Application.Services;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using MyApi.Application.Todos.Commands.CreateTodo;
+using MyApi.Application.Todos.Queries.GetTodos;
 
 namespace MyApi.Api.Controllers;
 
@@ -8,17 +9,17 @@ namespace MyApi.Api.Controllers;
 [Route("api/[controller]")]
 public class TodosController : ControllerBase
 {
-    private readonly TodoService _svc;
-    public TodosController(TodoService svc) => _svc = svc;
+    private readonly IMediator _mediator;
+    public TodosController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    public async Task<ActionResult> GetAll(CancellationToken ct) =>
-        Ok(await _svc.GetAllAsync(ct));
+    public async Task<IActionResult> GetAll(CancellationToken ct)
+        => Ok(await _mediator.Send(new GetTodosQuery(), ct));
 
     [HttpPost]
-    public async Task<ActionResult> Create([FromBody] TodoCreateDto dto, CancellationToken ct)
+    public async Task<IActionResult> Create([FromBody] CreateTodoCommand command, CancellationToken ct)
     {
-        var created = await _svc.CreateAsync(dto, ct);
+        var created = await _mediator.Send(command, ct);
         return Created($"/api/todos/{created.Id}", created);
     }
 }

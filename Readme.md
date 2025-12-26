@@ -44,4 +44,25 @@ Done. To undo this action, use 'ef migrations remove'
 MyApi2>dotnet tool run dotnet-ef database update --project src/MyApi.Infrastructure/MyApi.Infrastructure.csproj --startup-project src/MyApi.Api/MyApi.Api.csproj --context AppDbContext
 
 
+Clean, practical way to add CQRS (MediatR) + FluentValidation (Application layer) + global exception middleware + Repository + Unit of Work to the Clean Architecture setup we discussed (.NET 8).
+-----------------------------
+Add CQRS with MediatR
+Add FluentValidation in Application layer
+Add global exception handling middleware
+Add Repository + Unit of Work pattern (if needed)
 
+Add NuGet packages
+----------------------
+Application project
+----------------------
+dotnet add src/MyApi.Application/MyApi.Application.csproj package MediatR --version 12.4.1
+dotnet add src/MyApi.Application/MyApi.Application.csproj package FluentValidation --version 11.10.0
+dotnet add src/MyApi.Application/MyApi.Application.csproj package FluentValidation.DependencyInjectionExtensions --version 11.10.0
+
+API project
+--------------
+dotnet add src/MyApi.Api/MyApi.Api.csproj package MediatR.Extensions.Microsoft.DependencyInjection --version 12.1.1
+
+Infrastructure stays the same: EF Core + Npgsql packages
+
+Repository + Unit of Work (Infrastructure)

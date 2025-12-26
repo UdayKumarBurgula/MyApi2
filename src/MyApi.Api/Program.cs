@@ -1,4 +1,5 @@
-using MyApi.Application.Services;
+using MyApi.Api.Middleware;
+using MyApi.Application;
 using MyApi.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,10 +8,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddScoped<TodoService>();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
