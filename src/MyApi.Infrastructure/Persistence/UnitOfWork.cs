@@ -1,12 +1,21 @@
-﻿using MyApi.Application.Abstractions;
+﻿using Microsoft.Extensions.Logging;
+using MyApi.Application.Abstractions;
 
 namespace MyApi.Infrastructure.Persistence;
 
 public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _db;
-    public UnitOfWork(AppDbContext db) => _db = db;
+    private readonly ILogger<UnitOfWork> _logger;
+    public UnitOfWork(AppDbContext db, ILogger<UnitOfWork> logger) 
+    {
+        _db = db;
+        _logger = logger;
+    }
 
-    public Task<int> SaveChangesAsync(CancellationToken ct = default) =>
-        _db.SaveChangesAsync(ct);
+    public Task<int> SaveChangesAsync(CancellationToken ct = default)
+    {
+        _logger.LogInformation("UoW DbContext InstanceId: {Id}", _db.InstanceId);
+        return _db.SaveChangesAsync(ct);
+    }
 }

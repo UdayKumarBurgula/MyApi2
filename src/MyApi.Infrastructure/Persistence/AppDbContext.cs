@@ -5,6 +5,7 @@ namespace MyApi.Infrastructure.Persistence;
 
 public class AppDbContext : DbContext
 {
+    public Guid InstanceId { get; } = Guid.NewGuid();
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<TodoItem> TodoItems => Set<TodoItem>();

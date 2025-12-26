@@ -1,4 +1,4 @@
-
+﻿
 
 
 
@@ -66,3 +66,26 @@ dotnet add src/MyApi.Api/MyApi.Api.csproj package MediatR.Extensions.Microsoft.D
 Infrastructure stays the same: EF Core + Npgsql packages
 
 Repository + Unit of Work (Infrastructure)
+
+
+Application layer must NOT reference Infrastructure
+---------------------------------------------------------------------
+Api → Application → Domain
+Infrastructure → Application + Domain
+
+
+Why MediatR Handlers Are Transient - Why not MediatR be implemented as Singleton?
+-----------------------------------------------------------------------------------------
+
+public class CreateTodoHandler
+{
+    private readonly AppDbContext _db; // ❌ scoped - Cannot consume scoped service from singleton
+
+    public CreateTodoHandler(AppDbContext db) { }
+}
+
+Because AppDbContext is registered as scoped, and MediatR handlers are registered as transient by default. 
+If the handler were singleton, it would lead to capturing a scoped service in a singleton, 
+which is not allowed in ASP.NET Core's DI system. 
+This ensures that each request gets its own instance of the handler, which in turn gets its own instance of the scoped services it depends on.
+
