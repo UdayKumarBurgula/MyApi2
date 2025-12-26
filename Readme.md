@@ -1,0 +1,47 @@
+
+
+
+
+Clean Architecture structure for your .NET 8 Web API + EF Core + Postgres project, without overcomplicating it.
+---------------------------------------------------------------------------------------------------------------
+
+dotnet new sln -n MyApi
+
+mkdir src
+cd src
+
+dotnet new webapi -n MyApi.Api
+dotnet new classlib -n MyApi.Application
+dotnet new classlib -n MyApi.Domain
+dotnet new classlib -n MyApi.Infrastructure
+
+cd ..
+dotnet sln add src/MyApi.Api/MyApi.Api.csproj
+dotnet sln add src/MyApi.Application/MyApi.Application.csproj
+dotnet sln add src/MyApi.Domain/MyApi.Domain.csproj
+dotnet sln add src/MyApi.Infrastructure/MyApi.Infrastructure.csproj
+
+
+dotnet add src/MyApi.Api/MyApi.Api.csproj reference src/MyApi.Application/MyApi.Application.csproj
+dotnet add src/MyApi.Application/MyApi.Application.csproj reference src/MyApi.Domain/MyApi.Domain.csproj
+dotnet add src/MyApi.Infrastructure/MyApi.Infrastructure.csproj reference src/MyApi.Application/MyApi.Application.csproj
+dotnet add src/MyApi.Infrastructure/MyApi.Infrastructure.csproj reference src/MyApi.Domain/MyApi.Domain.csproj
+
+dotnet add src/MyApi.Infrastructure/MyApi.Infrastructure.csproj package Microsoft.EntityFrameworkCore --version 8.0.8
+dotnet add src/MyApi.Infrastructure/MyApi.Infrastructure.csproj package Microsoft.EntityFrameworkCore.Design --version 8.0.8
+dotnet add src/MyApi.Infrastructure/MyApi.Infrastructure.csproj package Npgsql.EntityFrameworkCore.PostgreSQL --version 8.0.4
+dotnet add src/MyApi.Infrastructure/MyApi.Infrastructure.csproj package EFCore.NamingConventions --version 8.0.3
+
+use TargetFramework net8.0
+-------------------------------------
+net8.0
+
+MyApi2>dotnet tool run dotnet-ef migrations add InitialCreate2 --project src/MyApi.Infrastructure/MyApi.Infrastructure.csproj  --startup-project src/MyApi.Api/MyApi.Api.csproj  --context AppDbContext --output-dir Persistence/Migrations
+Build started...
+Build succeeded.
+Done. To undo this action, use 'ef migrations remove'
+
+MyApi2>dotnet tool run dotnet-ef database update --project src/MyApi.Infrastructure/MyApi.Infrastructure.csproj --startup-project src/MyApi.Api/MyApi.Api.csproj --context AppDbContext
+
+
+
