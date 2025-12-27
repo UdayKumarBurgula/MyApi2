@@ -21,4 +21,8 @@
     <ProjectReference Include="..\MyApi.Infrastructure\MyApi.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="images\" />
+  </ItemGroup>
+
 </Project>
